@@ -4,6 +4,8 @@ import logger from "./logger";
 import env from "./config/env";
 import routes from "./routes";
 
+import db from "./database";
+
 const main = () => {
   const app = express();
 
@@ -24,7 +26,12 @@ const main = () => {
     res.send("Youtube sharing app");
   });
 
-  app.listen(env.port);
+  db.sequelize.authenticate().then(() => {
+    logger.info("Database connection has been established successfully.");
+    app.listen(env.port, () => {
+      logger.info(`Server started at port ${env.port}`);
+    });
+  });
 };
 
 main();
