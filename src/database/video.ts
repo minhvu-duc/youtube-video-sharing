@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import {
   InferAttributes,
   InferCreationAttributes,
@@ -8,28 +7,26 @@ import {
 } from "sequelize";
 import type DataType from "sequelize/types/data-types";
 
-export class User extends Model<
-  InferAttributes<User>,
-  InferCreationAttributes<User>
+export class Video extends Model<
+  InferAttributes<Video>,
+  InferCreationAttributes<Video>
 > {
   declare id: CreationOptional<string>;
-  declare email: string;
-  declare password: string;
-  declare name: string;
+  declare userId: string;
+  declare url: string;
   declare updatedAt?: Date;
   declare createdAt?: Date;
 
   static associate(models: any) {
-    User.hasMany(models.Video, {
+    Video.belongsTo(models.User, {
       foreignKey: "userId",
       onDelete: "cascade",
-      as: "video",
     });
   }
 }
 
 export default (sequelize: Sequelize, DataTypes: typeof DataType) => {
-  User.init(
+  Video.init(
     {
       id: {
         allowNull: false,
@@ -37,33 +34,24 @@ export default (sequelize: Sequelize, DataTypes: typeof DataType) => {
         defaultValue: DataTypes.UUIDV4,
         type: DataTypes.UUIDV4,
       },
-      email: {
+      userId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+      },
+      url: {
         allowNull: false,
         type: DataTypes.STRING,
         unique: true,
-      },
-      password: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      name: {
-        allowNull: false,
-        type: DataTypes.STRING,
+        validate: {
+          isUrl: true,
+        },
       },
     },
     {
-      hooks: {
-        async beforeCreate(user) {
-          user.password = await bcrypt.hash(user.password, 10);
-        },
-        async beforeUpdate(user) {
-          user.password = await bcrypt.hash(user.password, 10);
-        },
-      },
       sequelize,
-      modelName: "User",
+      modelName: "Video",
     },
   );
 
-  return User;
+  return Video;
 };
