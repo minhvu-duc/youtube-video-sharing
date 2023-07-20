@@ -38,7 +38,7 @@
       }
     ],
     "no-unused-vars": [
-      "error",
+      "warn",
       {
         "varsIgnorePattern": "^_",
         "argsIgnorePattern": "^_"
@@ -48,14 +48,18 @@
     "no-plusplus": "off",
     "no-await-in-loop": "off",
     "no-param-reassign": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "lines-between-class-members": "off",
+    "max-len": "off"
   },
   "settings": {
     "import/resolver": {
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx", ".d.ts"],
         "paths": [".", "src"]
-      }
+      },
+      "typescript": {}
     }
   },
   "globals": {

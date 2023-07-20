@@ -14,10 +14,17 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "paths": {
-      "tests/*": ["../tests/*"]
+      "@tests/*": ["src/tests/*"],
+      "@config/*": ["./config/*"],
+      "@database/*": ["./database/*"],
+      "@entity/*": ["./entity/*"],
+      "@logger/*": ["./logger/*"],
+      "@middlewares/*": ["./middlewares/*"],
+      "@services/*": ["./services/*"],
+      "@utils/*": ["./utils/*"]
     },
     "typeRoots": ["src/@types", "./node_modules/@types"]
   },
   "include": ["src/**/*", "tests/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "src/ui"]
 }

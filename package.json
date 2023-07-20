@@ -4,21 +4,48 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^20.4.2",
+    "@types/sequelize": "^4.28.15",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.45.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsonc": "^2.9.0",
     "eslint-plugin-n": "^16.0.1",
     "nodemon": "^3.0.1",
+    "sequelize-cli": "^6.6.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   },
-
   "scripts": {
-    "start": "nodemon src/main.ts --exec ts-node",
-    "lint": "eslint . --ext .ts"
+    "start": "cross-env NODE_ENV=production ts-node --transpile-only -r tsconfig-paths/register src/main",
+    "lint": "eslint . --ext .ts",
+    "dev": "nodemon -r tsconfig-paths/register src/main.ts",
+    "db:migrate": "sequelize db:migrate",
+    "db:seed": "sequelize db:seed:all"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "googleapis": "^122.0.0",
+    "joi": "^17.9.2",
+    "jsonwebtoken": "^9.0.1",
+    "lodash": "^4.17.21",
+    "pg": "^8.11.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.32.1",
+    "sequelize-typescript": "^2.1.5",
+    "tsconfig-paths": "^4.2.0",
+    "uuid": "^9.0.0",
+    "winston": "^3.10.0"
   }
 }
