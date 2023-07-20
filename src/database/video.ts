@@ -14,6 +14,8 @@ export class Video extends Model<
   declare id: CreationOptional<string>;
   declare userId: string;
   declare url: string;
+  declare title: string;
+  declare description: string;
   declare updatedAt?: Date;
   declare createdAt?: Date;
 
@@ -45,6 +47,14 @@ export default (sequelize: Sequelize, DataTypes: typeof DataType) => {
         validate: {
           isUrl: true,
         },
+      },
+      title: {
+        allowNull: false,
+        type: DataTypes.STRING(300),
+      },
+      description: {
+        allowNull: false,
+        type: DataTypes.STRING(2000),
       },
     },
     {
