@@ -20,9 +20,14 @@ const videoCreate = (req: Request): Joi.ValidationResult<VideoCreate> => {
 
   const schema = Joi.object<VideoCreate>({
     isAuthenticated: Joi.boolean().required(),
-    url: Joi.string().required(),
-    title: Joi.string().required(),
-    description: Joi.string().required(),
+    url: Joi.string().required().custom((value, helpers) => {
+      if (value.includes("youtube.com") && value.includes("/watch?v=")) {
+        return value;
+      }
+      return helpers.error("any.invalid");
+    }),
+    title: Joi.string(),
+    description: Joi.string(),
     userId: Joi.string(),
   });
 
@@ -39,7 +44,10 @@ const getVideos = (req:Request): Joi.ValidationResult<GetVideos> => {
     limit: Joi.number().greater(0).required(),
   });
 
-  return schema.validate(req.body);
+  return schema.validate({
+    page: Number(req.query.page),
+    limit: Number(req.query.limit),
+  });
 };
 
 export default {

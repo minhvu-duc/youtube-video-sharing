@@ -51,7 +51,7 @@ export const userCreate = async (payload: UserCreate): Promise<Controller> => {
   return {
     status: 201,
     json: {
-      accessToken,
+      token: accessToken,
       user: newUser,
     },
   };

@@ -4,6 +4,7 @@ import logger from "@logger/index";
 import { ERROR_MESSAGE } from "@config/constants";
 import { Video } from "@database/video";
 import { User } from "@database/user";
+import { getYoutubeVideoDetails } from "@services/googleapis";
 
 import validators, { GetVideos, VideoCreate } from "./validator";
 
@@ -59,11 +60,22 @@ export const videoCreate = async (payload: VideoCreate): Promise<Controller> => 
     };
   }
 
+  const videoIdPattern = /(?:v=|\/)([a-zA-Z0-9_-]{11})/;
+  const match = payload.url.match(videoIdPattern);
+
+  let title = "Untitled";
+  let description = "Unknown";
+  if (match) {
+    const result = await getYoutubeVideoDetails(match[1]);
+    title = result.title;
+    description = result.description;
+  }
+
   const newVideo = await Video.create({
     userId: payload.userId,
     url: payload.url,
-    title: payload.title,
-    description: payload.description,
+    title,
+    description,
   });
 
   return {
