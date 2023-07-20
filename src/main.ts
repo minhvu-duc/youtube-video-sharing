@@ -2,7 +2,7 @@ import express, { Response, urlencoded } from "express";
 import cors from "cors";
 import logger from "./logger";
 import env from "./config/env";
-import routes from "./routes";
+import router from "./entity";
 
 import db from "./database";
 
@@ -20,7 +20,7 @@ const main = () => {
     next();
   });
 
-  app.use("/", routes);
+  app.use("/", router);
 
   app.get("/", (_, res: Response) => {
     res.send("Youtube sharing app");
