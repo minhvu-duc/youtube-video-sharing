@@ -26,6 +26,7 @@
   },
   "scripts": {
     "start": "cross-env NODE_ENV=production ts-node --transpile-only -r tsconfig-paths/register src/main",
+    "postinstall": "tsc && tsc-alias && cp -r src/ui dist/",
     "lint": "eslint . --ext .ts",
     "dev": "nodemon -r tsconfig-paths/register src/main.ts",
     "db:migrate": "sequelize db:migrate",
@@ -44,6 +45,7 @@
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.32.1",
     "sequelize-typescript": "^2.1.5",
+    "tsc-alias": "^1.8.7",
     "tsconfig-paths": "^4.2.0",
     "uuid": "^9.0.0",
     "winston": "^3.10.0"
