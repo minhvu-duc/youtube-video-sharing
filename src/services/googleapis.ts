@@ -2,8 +2,8 @@ import { google } from "googleapis";
 import get from "lodash/get";
 
 type VideoDetail = {
-  title: string | undefined,
-  description: string | undefined
+  title: string,
+  description: string
 }
 
 export const getYoutube = () => google.youtube({
@@ -19,8 +19,8 @@ export const getYoutubeVideoDetails = async (videoId: string): Promise<VideoDeta
     } as any);
 
     const video = response.data.items?.[0];
-    const title = get(video, "video.snippet.title", "Untitled");
-    const description = get(video, "video.snippet.description", "Unknown");
+    const title = get(video, "snippet.title", "Untitled");
+    const description = get(video, "snippet.description", "Unknown");
 
     return {
       title,

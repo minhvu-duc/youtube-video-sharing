@@ -7,6 +7,8 @@ import {
 } from "sequelize";
 import type DataType from "sequelize/types/data-types";
 
+import { getYoutubeVideoDetails } from "@services/googleapis";
+
 export class Video extends Model<
   InferAttributes<Video>,
   InferCreationAttributes<Video>
@@ -14,8 +16,8 @@ export class Video extends Model<
   declare id: CreationOptional<string>;
   declare userId: string;
   declare url: string;
-  declare title: string;
-  declare description: string;
+  declare title: CreationOptional<string>;
+  declare description: CreationOptional<string>;
   declare updatedAt?: Date;
   declare createdAt?: Date;
 

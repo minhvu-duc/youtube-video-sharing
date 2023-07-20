@@ -18,7 +18,7 @@ const YoutubePlayer = ({ url, title, description, username }: YoutubePlayerProps
 
   const videoId = useMemo(() => {
     if (url) {
-      const videoIdPattern = /(?:v=|\/)([a-zA-Z0-9_-]{11})/; // Regex pattern to match the video ID
+      const videoIdPattern = /(?:v=|\/)([a-zA-Z0-9_-]{11})/;
       const match = url.match(videoIdPattern);
 
       if (match) {
@@ -35,7 +35,7 @@ const YoutubePlayer = ({ url, title, description, username }: YoutubePlayerProps
           opts={opts}
         />
       </div>
-      <div className='ml-0 md:ml-3 p-2 bg-gray-100 shadow-md text-sm w-[350px] h-[300px]'>
+      <div className='ml-0 md:ml-3 p-2 bg-gray-100 text-sm w-[350px] h-[300px]'>
         <div>{title}</div>
         <div>Shared by: {username}</div>
         <div>Description:</div>
