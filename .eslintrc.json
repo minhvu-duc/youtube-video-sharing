@@ -50,7 +50,8 @@
     "no-param-reassign": "off",
     "no-console": "off",
     "@typescript-eslint/no-explicit-any": "warn",
-    "lines-between-class-members": "off"
+    "lines-between-class-members": "off",
+    "max-len": "off"
   },
   "settings": {
     "import/resolver": {

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import env from "@config/env";
 import { User } from "../database/user";
 import { Blacklist } from "../database/backlist";
 import { ERROR_MESSAGE } from "../config/constants";
@@ -17,7 +18,7 @@ export const userAuth = async (
 
     const { error, userId } = verifyJWT(
       req.headers.authorization.slice(7),
-      process.env.JWT_SECRET as string,
+      env.jwtSecret,
     );
 
     if (error) {
