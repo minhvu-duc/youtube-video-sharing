@@ -46,12 +46,12 @@ const main = () => {
       if (!accessToken) throw new Error("Access token missing");
 
       const { error, userId } = verifyJWT(accessToken, env.jwtSecret);
-      if (error) throw new Error("Access tokne invalid");
+      if (error) throw new Error("Access token invalid");
 
       const isInBlackList = await Blacklist.findOne({
         where: { token: accessToken },
       });
-      if (isInBlackList) throw new Error("Access tokne invalid");
+      if (isInBlackList) throw new Error("Access token invalid");
 
       const user = await User.findOne({ where: { id: userId } });
       if (!user) throw new Error("User does not exist");

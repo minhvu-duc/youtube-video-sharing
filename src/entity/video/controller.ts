@@ -72,6 +72,20 @@ export const videoCreate = async (payload: VideoCreate): Promise<Controller> => 
     description = result.description;
   }
 
+  if (description.length > 2000) {
+    return {
+      status: 400,
+      json: { error: ERROR_MESSAGE.DESCRIPTION_TOO_LONG },
+    };
+  }
+
+  if (title.length > 300) {
+    return {
+      status: 400,
+      json: { error: ERROR_MESSAGE.TITLE_TOO_LONG },
+    };
+  }
+
   const newVideo = await Video.create({
     userId: payload.userId,
     url: payload.url,

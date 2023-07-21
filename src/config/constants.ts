@@ -7,4 +7,6 @@ export const ERROR_MESSAGE = {
   INCORRECT_EMAIL_OR_PASSWORD: "Incorrect email or password",
   INVALID_REQUEST: "Invalid request.",
   VIDEO_ALREADY_EXISTS: "Video already exists.",
+  DESCRIPTION_TOO_LONG: "Description too long. Max 2000 characters",
+  TITLE_TOO_LONG: "Title too long. Max 300 characters",
 };

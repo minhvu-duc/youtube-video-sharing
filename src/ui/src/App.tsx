@@ -1,14 +1,24 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import get from 'lodash/get'
 
 import YoutubePlayer from './component/YoutubePlayer'
 import Modal from './component/ShareVideo'
 
 import { toast, Toaster } from 'react-hot-toast'
 
+import { AxiosError } from 'axios'
+
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL
 })
+
+const getErrorMessage = (err: Error | AxiosError): string => {
+  if (err instanceof AxiosError) {
+    return get(err, 'response.data.error', 'Something went wrong')
+  }
+  return get(err, 'message', 'Something went wrong.')
+}
 
 function App() {
   const [user, setUser] = useState<any>(null)
@@ -28,13 +38,13 @@ function App() {
         const result = await axiosInstance.get('/video/get', {
           params: {
             page,
-            limit: 1
+            limit: 10
           }
         })
   
         setVideos(result.data)
-      } catch (err) {
-
+      } catch (err: any) {
+        toast(getErrorMessage(err))
       }
     }
 
@@ -58,19 +68,23 @@ function App() {
     }
 
     const initWebsocket = async () => {
-      const accessToken = localStorage.getItem('access-token')
-      if (accessToken) {
-        let baseUrl = process.env.REACT_APP_WS_URL
-        if (process.env.NODE_ENV === 'production') {        
-          const currentOrigin = window.location.origin;
-          const webSocketUrl = currentOrigin.replace(/^http/, 'ws');
-          baseUrl = webSocketUrl
+      try {
+        const accessToken = localStorage.getItem('access-token')
+        if (accessToken) {
+          let baseUrl = process.env.REACT_APP_WS_URL
+          if (process.env.NODE_ENV === 'production') {        
+            const currentOrigin = window.location.origin;
+            const webSocketUrl = currentOrigin.replace(/^http/, 'ws');
+            baseUrl = webSocketUrl
+          }
+          const ws = new WebSocket(`${baseUrl}?accessToken=${accessToken}`);
+    
+          ws.addEventListener('message', (event) => {
+            toast(event.data)
+          })
         }
-        const ws = new WebSocket(`${baseUrl}?accessToken=${accessToken}`);
-  
-        ws.addEventListener('message', (event) => {
-          toast(event.data)
-        })
+      } catch (err: any) {
+        toast(getErrorMessage(err))
       }
     }
 
@@ -83,7 +97,7 @@ function App() {
     const result = await axiosInstance.get('/video/get', {
       params: {
         page: page + 1,
-        limit: 1
+        limit: 10
       }
     })
 
@@ -134,10 +148,8 @@ function App() {
         return setUser(result.data.user)
       }
     } catch (err: any) {
-      console.log(err.response.data.error)
+      toast(getErrorMessage(err))
     }
-
-
   }
 
   const handleShareVideo = async () => {
@@ -151,8 +163,9 @@ function App() {
         }
       })
       setShowSharing(false)
-    } catch (err) {
-      console.error(err)
+    } catch (err: any) {
+      setShowSharing(false)
+      toast(getErrorMessage(err))
     }
   }
 
@@ -166,6 +179,7 @@ function App() {
       })
 
       setUser(null)
+      localStorage.removeItem('access-token')
     } catch (err) {
 
     }
