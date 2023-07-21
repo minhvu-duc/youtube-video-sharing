@@ -82,6 +82,12 @@ function App() {
           ws.addEventListener('message', (event) => {
             toast(event.data)
           })
+
+          ws.onclose = function(e) {
+            setTimeout(() => {
+              initWebsocket()
+            }, 1000)
+          }
         }
       } catch (err: any) {
         toast(getErrorMessage(err))

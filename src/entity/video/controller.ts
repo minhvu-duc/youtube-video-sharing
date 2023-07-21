@@ -112,9 +112,11 @@ export const videoCreate = async (payload: VideoCreate): Promise<Controller> => 
 };
 
 export const getVideos = async (payload: GetVideos): Promise<Controller> => {
+  let offset = (payload.page) * 10;
+  if (payload.page === 1) offset = 0;
   const videos = await Video.findAll({
     limit: payload.limit,
-    offset: payload.page - 1,
+    offset,
     include: {
       model: User,
       attributes: ["name"],

@@ -56,10 +56,11 @@ const main = () => {
       const user = await User.findOne({ where: { id: userId } });
       if (!user) throw new Error("User does not exist");
 
+      logger.info("Client connected: ", req.url);
       wsClients.add(ws);
 
       ws.on("close", () => {
-        logger.info("Client disconnected: ", ws.url);
+        logger.info("Client disconnected: ", req.url);
         wsClients.delete(ws);
       });
     } catch (err: any) {
