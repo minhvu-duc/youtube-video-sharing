@@ -10,7 +10,7 @@ module.exports = {
       freezeTableName: true,
     },
   },
-  test_local: {
+  test: {
     database: "youtube_sharing_test",
     host: "127.0.0.1",
     dialect: "postgres",
@@ -19,10 +19,9 @@ module.exports = {
       freezeTableName: true,
     },
   },
-  test: {
-    database: "circle_test",
-    username: "postgres",
-    host: "localhost",
+  test_local: {
+    database: "youtube_sharing_test",
+    host: "127.0.0.1",
     dialect: "postgres",
     logging: false,
     define: {

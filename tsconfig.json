@@ -14,7 +14,7 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "paths": {
-      "@tests/*": ["src/tests/*"],
+      "@tests/*": ["../tests/*"],
       "@config/*": ["./config/*"],
       "@database/*": ["./database/*"],
       "@entity/*": ["./entity/*"],
