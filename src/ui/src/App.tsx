@@ -1,10 +1,24 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import get from 'lodash/get'
 
 import YoutubePlayer from './component/YoutubePlayer'
 import Modal from './component/ShareVideo'
 
-const BASE_URL = ""
+import { toast, Toaster } from 'react-hot-toast'
+
+import { AxiosError } from 'axios'
+
+const axiosInstance = axios.create({
+  baseURL: process.env.REACT_APP_BASE_URL
+})
+
+const getErrorMessage = (err: Error | AxiosError): string => {
+  if (err instanceof AxiosError) {
+    return get(err, 'response.data.error', 'Something went wrong')
+  }
+  return get(err, 'message', 'Something went wrong.')
+}
 
 function App() {
   const [user, setUser] = useState<any>(null)
@@ -21,16 +35,16 @@ function App() {
   useEffect(() => {
     const loadVideo = async () => {
       try {
-        const result = await axios.get('/video/get', {
+        const result = await axiosInstance.get('/video/get', {
           params: {
             page,
-            limit: 1
+            limit: 10
           }
         })
   
         setVideos(result.data)
-      } catch (err) {
-
+      } catch (err: any) {
+        toast(getErrorMessage(err))
       }
     }
 
@@ -38,7 +52,7 @@ function App() {
       try {
         const token = localStorage.getItem("access-token")
         if (token) {
-          const result = await axios.get('/user/info', {
+          const result = await axiosInstance.get('/user/info', {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -53,15 +67,37 @@ function App() {
       }
     }
 
+    const initWebsocket = async () => {
+      try {
+        const accessToken = localStorage.getItem('access-token')
+        if (accessToken) {
+          let baseUrl = process.env.REACT_APP_WS_URL
+          if (process.env.NODE_ENV === 'production') {        
+            const currentOrigin = window.location.origin;
+            const webSocketUrl = currentOrigin.replace(/^http/, 'ws');
+            baseUrl = webSocketUrl
+          }
+          const ws = new WebSocket(`${baseUrl}?accessToken=${accessToken}`);
+    
+          ws.addEventListener('message', (event) => {
+            toast(event.data)
+          })
+        }
+      } catch (err: any) {
+        toast(getErrorMessage(err))
+      }
+    }
+
     loadVideo()
     loadUser()
+    initWebsocket()
   }, [])
 
   const handleLoadMore = async () => {
-    const result = await axios.get('/video/get', {
+    const result = await axiosInstance.get('/video/get', {
       params: {
         page: page + 1,
-        limit: 1
+        limit: 10
       }
     })
 
@@ -86,7 +122,7 @@ function App() {
 
     let result;
     try {
-      result = await axios.post('/user/create', {
+      result = await axiosInstance.post('/user/create', {
         email,
         password,
         name
@@ -101,7 +137,7 @@ function App() {
     }
 
     try {
-      result = await axios.post('/user/login', {
+      result = await axiosInstance.post('/user/login', {
         email,
         password
       })
@@ -112,16 +148,14 @@ function App() {
         return setUser(result.data.user)
       }
     } catch (err: any) {
-      console.log(err.response.data.error)
+      toast(getErrorMessage(err))
     }
-
-
   }
 
   const handleShareVideo = async () => {
     try {
       const token = localStorage.getItem("access-token")
-      await axios.post('/video/create', {
+      await axiosInstance.post('/video/create', {
         url: videoUrl
       }, {
         headers: {
@@ -129,21 +163,23 @@ function App() {
         }
       })
       setShowSharing(false)
-    } catch (err) {
-      console.error(err)
+    } catch (err: any) {
+      setShowSharing(false)
+      toast(getErrorMessage(err))
     }
   }
 
   const handleLogout = async () => {
     const token = localStorage.getItem("access-token")
     try {
-      await axios.post('/user/logout', {}, {
+      await axiosInstance.post('/user/logout', {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
 
       setUser(null)
+      localStorage.removeItem('access-token')
     } catch (err) {
 
     }
@@ -187,6 +223,7 @@ function App() {
           <button onClick={handleShareVideo} className=' bg-gray-300 px-2 py-1'>Share</button>
         </div>
       </Modal>
+      <Toaster />
     </div>
   );
 }
