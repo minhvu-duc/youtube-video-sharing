@@ -4,7 +4,11 @@ import axios from 'axios'
 import YoutubePlayer from './component/YoutubePlayer'
 import Modal from './component/ShareVideo'
 
-const BASE_URL = ""
+import { toast, Toaster } from 'react-hot-toast'
+
+const axiosInstance = axios.create({
+  baseURL: process.env.REACT_APP_BASE_URL
+})
 
 function App() {
   const [user, setUser] = useState<any>(null)
@@ -21,7 +25,7 @@ function App() {
   useEffect(() => {
     const loadVideo = async () => {
       try {
-        const result = await axios.get('/video/get', {
+        const result = await axiosInstance.get('/video/get', {
           params: {
             page,
             limit: 1
@@ -38,7 +42,7 @@ function App() {
       try {
         const token = localStorage.getItem("access-token")
         if (token) {
-          const result = await axios.get('/user/info', {
+          const result = await axiosInstance.get('/user/info', {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -53,12 +57,30 @@ function App() {
       }
     }
 
+    const initWebsocket = async () => {
+      const accessToken = localStorage.getItem('access-token')
+      if (accessToken) {
+        let baseUrl = process.env.REACT_APP_WS_URL
+        if (process.env.NODE_ENV === 'production') {        
+          const currentOrigin = window.location.origin;
+          const webSocketUrl = currentOrigin.replace(/^http/, 'ws');
+          baseUrl = webSocketUrl
+        }
+        const ws = new WebSocket(`${baseUrl}?accessToken=${accessToken}`);
+  
+        ws.addEventListener('message', (event) => {
+          toast(event.data)
+        })
+      }
+    }
+
     loadVideo()
     loadUser()
+    initWebsocket()
   }, [])
 
   const handleLoadMore = async () => {
-    const result = await axios.get('/video/get', {
+    const result = await axiosInstance.get('/video/get', {
       params: {
         page: page + 1,
         limit: 1
@@ -86,7 +108,7 @@ function App() {
 
     let result;
     try {
-      result = await axios.post('/user/create', {
+      result = await axiosInstance.post('/user/create', {
         email,
         password,
         name
@@ -101,7 +123,7 @@ function App() {
     }
 
     try {
-      result = await axios.post('/user/login', {
+      result = await axiosInstance.post('/user/login', {
         email,
         password
       })
@@ -121,7 +143,7 @@ function App() {
   const handleShareVideo = async () => {
     try {
       const token = localStorage.getItem("access-token")
-      await axios.post('/video/create', {
+      await axiosInstance.post('/video/create', {
         url: videoUrl
       }, {
         headers: {
@@ -137,7 +159,7 @@ function App() {
   const handleLogout = async () => {
     const token = localStorage.getItem("access-token")
     try {
-      await axios.post('/user/logout', {}, {
+      await axiosInstance.post('/user/logout', {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -187,6 +209,7 @@ function App() {
           <button onClick={handleShareVideo} className=' bg-gray-300 px-2 py-1'>Share</button>
         </div>
       </Modal>
+      <Toaster />
     </div>
   );
 }
